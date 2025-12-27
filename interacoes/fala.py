@@ -2,23 +2,18 @@ import speech_recognition as sr
 import pyttsx3
 import json
 import os
-from openai import OpenAI
+import ollama
 
 # ======================
-# CONFIGURAÇÃO AIMLAPI
+# CONFIGURAÇÃO
 # ======================
-client = OpenAI(
-    api_key="8f39166d6bcf4be89db4b126f8d21caa",  # key fictícia
-    base_url="https://api.aimlapi.com/v1"
-)
-
-MODEL_NAME = "gpt-5-chat-latest"
+MODEL_NAME = "mistral"
 MEMORY_FILE = "memory.json"
 
 SYSTEM_PROMPT = """
 Você é uma assistente virtual tsundere.
 Você fala português brasileiro.
-Você responde com personalidade, mas ajuda de verdade.
+Você ajuda, mas finge que não se importa.
 Você pode ser sarcástica, mas não ofensiva.
 Você lembra informações importantes do usuário.
 """
@@ -55,6 +50,7 @@ tts = pyttsx3.init()
 tts.setProperty("rate", 180)
 
 def speak(text):
+    print("🤖 IA:", text)
     tts.say(text)
     tts.runAndWait()
 
@@ -76,21 +72,20 @@ def listen():
         return ""
 
 # ======================
-# GPT
+# OLLAMA
 # ======================
-def ask_gpt(user_text):
+def ask_ollama(user_text):
     messages = [
         {"role": "system", "content": SYSTEM_PROMPT + "\n" + memory_context()},
         {"role": "user", "content": user_text}
     ]
 
-    response = client.chat.completions.create(
+    response = ollama.chat(
         model=MODEL_NAME,
-        messages=messages,
-        temperature=0.8
+        messages=messages
     )
 
-    return response.choices[0].message.content
+    return response["message"]["content"]
 
 # ======================
 # MEMORIZAR COISAS
@@ -128,6 +123,5 @@ while True:
 
     check_memory(user_text)
 
-    reply = ask_gpt(user_text)
-    print("🤖 IA:", reply)
+    reply = ask_ollama(user_text)
     speak(reply)
