@@ -3,7 +3,7 @@
 Echo-sama é uma "IA" desenvolvido em **Python**, estruturado de forma modular para entretenimento(ela é uma tsundere).  
 
 O projeto separa claramente:
-- a lógica central do bot  
+- a lógica central da IA  
 - as interações com o usuário  
 - o sistema de armazenamento de dados  
 
